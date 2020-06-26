@@ -4,20 +4,22 @@ var camera, renderer, scene
 var spotLight
 
 //physics
-var surfaceMesh, ball, table
+var surfaceMesh, groundBody, groundShape, ball, ballBody, ballShape, table
 var pin
 var mass,
     world,
     timeStep = 1 / 60
-
+var cannonDebugRenderer
 var time
 
 var balls = []
+var ballsBodys = []
 
 var power = 0
 
 init()
 
+initCannon()
 async function init() {
     scene = new THREE.Scene()
 
@@ -106,4 +108,35 @@ async function init() {
     nearSpotLight.shadow.camera.far = 500
     nearSpotLight.visible = true
     scene.add(nearSpotLight)
+}
+function initCannon() {
+    //? World Setup
+    world = new CANNON.World()
+    world.gravity.set(0, -26, 0)
+    world.broadphase = new CANNON.NaiveBroadphase()
+    world.solver.iterations = 20
+    world.defaultContactMaterial.contactEquationStiffness = 1e9
+    world.defaultContactMaterial.contactEquationRelaxation = 4
+
+    // Cannon && Physics
+
+    // << Ball >>
+    ballShape = new CANNON.Sphere(1.1)
+    ballBody = new CANNON.Body({ mass: 700 })
+    ballBody.addShape(ballShape)
+    //est
+    ballBody.angularDamping = 0.3
+    ballBody.position.set(-6, 5, 7)
+    ballsBodys.push(ballBody)
+    world.add(ballsBodys[0])
+
+    // Ground (Floor)
+    groundShape = new CANNON.Plane()
+    groundBody = new CANNON.Body({ mass: 0 })
+    groundBody.addShape(groundShape)
+    world.add(groundBody)
+    groundBody.position.copy(surfaceMesh.position)
+    groundBody.quaternion.copy(surfaceMesh.quaternion)
+
+    cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world)
 }

@@ -10,16 +10,26 @@ var mass,
     world,
     timeStep = 1 / 60
 var cannonDebugRenderer
+var phsyicRenderer = false
 var time
-
+var counter1 = 0,
+    counter2 = 0
 var balls = []
+var countBall = 0
 var ballsBodys = []
+var pinArrayBody = []
+var scores = 0
 
 var power = 0
+
+var flag1 = 1
 
 init()
 
 initCannon()
+
+animate()
+
 async function init() {
     scene = new THREE.Scene()
 
@@ -109,6 +119,7 @@ async function init() {
     nearSpotLight.visible = true
     scene.add(nearSpotLight)
 }
+
 function initCannon() {
     //? World Setup
     world = new CANNON.World()
@@ -139,4 +150,93 @@ function initCannon() {
     groundBody.quaternion.copy(surfaceMesh.quaternion)
 
     cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world)
+}
+
+function animate() {
+    requestAnimationFrame(animate)
+    updatePhysics()
+    if (phsyicRenderer) cannonDebugRenderer.update()
+    render()
+}
+
+function updatePhysics() {
+    // Main setup for Cannon JS
+    world.step(timeStep)
+
+    // Merge Mesh & Physic
+
+    //Bowling Balls
+    balls[0].position.copy(ballsBodys[0].position)
+    balls[0].quaternion.copy(ballsBodys[0].quaternion)
+}
+
+function render() {
+    renderer.render(scene, camera)
+    ballMove()
+    camera.updateMatrixWorld()
+}
+
+var seconds_passed = 0
+function onDocumentKeyDown(event) {
+    if (event.keyCode == 13) {
+        power++
+    }
+}
+
+var i = 0
+async function onDocumentKeyUp(event) {
+    if (event.keyCode == 13) {
+        if (countBall < 1)
+            ballsBodys[countBall].velocity.set(0, -20, -(power * 2))
+        countBall++
+
+        if (countBall >= 1) {
+            await setTimeout(function () {
+                camera.position.x = 0
+                camera.position.y = 5
+                camera.position.z = -20
+                camera.lookAt(table.position)
+            }, 3000)
+            setInterval(function () {
+                if (flag1) {
+                    let scorescore = document.getElementById("scorestate")
+                    scorescore.innerHTML = checked()
+                    flag1 = 0
+                }
+            }, 10000)
+        }
+    }
+}
+
+function checked() {
+    for (var j = 0; j < 10; j = j + 1) {
+        if (pinArrayBody[j].position.z < -55) {
+            scores = scores + 10
+        }
+    }
+    console.log(scores)
+    return scores
+}
+
+function ballMove() {
+    if (counter1 < 50) {
+        if (countBall <= 0) {
+            ballsBodys[0].position.x += 0.25
+        }
+        counter1++
+    } else if (counter2 < 50 && counter1 == 50) {
+        if (countBall <= 0) {
+            ballsBodys[0].position.x -= 0.25
+        }
+        counter2++
+    } else {
+        counter1 = 0
+        counter2 = 0
+    }
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight)
 }

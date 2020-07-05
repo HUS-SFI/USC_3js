@@ -22,7 +22,8 @@ var scores = 0
 var goalMesh,
  
 var power = 0
-
+var postMesh,
+post2Mesh,
 var flag1 = 1
 
 init()
@@ -97,6 +98,51 @@ async function init() {
     goalMesh.receiveShadow = true
     goalMesh.visible = false
     scene.add(goalMesh)
+
+ // Posts
+    // 1:
+
+    let postTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    postTexture.repeat.set(4, 1);
+    postTexture.wrapS = THREE.RepeatWrapping;
+    postTexture.wrapT = THREE.RepeatWrapping;
+    postTexture.minFilter = THREE.NearestFilter;
+    let postGeometry = new THREE.BoxGeometry(0.5, 5, 0);
+    let postMaterial = new THREE.MeshPhongMaterial({
+        map: postTexture,
+        shading: THREE.SmoothShading
+    });
+    postMesh = new THREE.Mesh(postGeometry, postMaterial)
+    postMesh.rotateX(-Math.PI)
+    postMesh.position.y = -3
+    postMesh.position.z = -45
+    postMesh.position.x = 0
+    postMesh.receiveShadow = true
+    postMesh.visible = false
+    scene.add(postMesh)
+
+    // 2:
+
+    let post2Texture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    post2Texture.repeat.set(4, 1);
+    post2Texture.wrapS = THREE.RepeatWrapping;
+    post2Texture.wrapT = THREE.RepeatWrapping;
+    post2Texture.minFilter = THREE.NearestFilter;
+    let post2Geometry = new THREE.BoxGeometry(0.5, 5, 0);
+    let post2Material = new THREE.MeshPhongMaterial({
+        map: postTexture,
+        shading: THREE.SmoothShading
+    });
+    post2Mesh = new THREE.Mesh(post2Geometry, post2Material)
+    post2Mesh.rotateX(-Math.PI)
+    post2Mesh.position.y = -3
+    post2Mesh.position.z = -45
+    post2Mesh.position.x = 0
+    post2Mesh.receiveShadow = true
+    post2Mesh.visible = false
+    scene.add(post2Mesh)
+
+    
 
     // Shapes
     // << Bowling Ball >>

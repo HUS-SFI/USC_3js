@@ -318,6 +318,19 @@ function updatePhysics() {
     //Bowling Balls
     balls[0].position.copy(ballsBodys[0].position)
     balls[0].quaternion.copy(ballsBodys[0].quaternion)
+
+    // Goal
+    goalMesh.position.copy(goalBody.position)
+    goalMesh.quaternion.copy(goalBody.quaternion)
+
+    // Post
+    // 1:
+    postMesh.position.copy(postBody.position)
+    postMesh.quaternion.copy(postBody.quaternion)
+
+    // 2:
+    post2Mesh.position.copy(post2Body.position)
+    post2Mesh.quaternion.copy(post2Body.quaternion)
 }
 
 function render() {

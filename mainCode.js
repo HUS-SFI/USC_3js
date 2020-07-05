@@ -76,6 +76,27 @@ async function init() {
     surfaceMesh.receiveShadow = true
     scene.add(surfaceMesh)
 
+    // Goal
+
+    let goalTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
+    goalTexture.repeat.set(4, 1)
+    goalTexture.wrapS = THREE.RepeatWrapping
+    goalTexture.wrapT = THREE.RepeatWrapping
+    goalTexture.minFilter = THREE.NearestFilter
+    let goalGeometry = new THREE.BoxGeometry(7, 5, 1)
+    let goalMaterial = new THREE.MeshPhongMaterial({
+        map: goalTexture,
+        shading: THREE.SmoothShading,
+    })
+    goalMesh = new THREE.Mesh(goalGeometry, goalMaterial)
+    goalMesh.rotateX(-Math.PI)
+    goalMesh.position.y = -3
+    goalMesh.position.z = -45
+    goalMesh.position.x = 0
+    goalMesh.receiveShadow = true
+    goalMesh.visible = false
+    scene.add(goalMesh)
+
     // Shapes
     // << Bowling Ball >>
     let bowlingBallTexture = THREE.ImageUtils.loadTexture(

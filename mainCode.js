@@ -291,6 +291,15 @@ function initCannon() {
     post2Body.position.set(3.5, -3, -43)
     world.add(post2Body)
 
+    //Goalkeeper Physic
+
+    goalkeeperShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
+    goalkeeperBody = new CANNON.Body({ mass: 1000 })
+    goalkeeperBody.addShape(goalkeeperShape)
+    goalkeeperBody.angularDamping = 1
+    goalkeeperBody.position.set(-3, -3, -35)
+    world.add(goalkeeperBody)
+
     // Ground (Floor)
     groundShape = new CANNON.Plane()
     groundBody = new CANNON.Body({ mass: 0 })
@@ -331,6 +340,9 @@ function updatePhysics() {
     // 2:
     post2Mesh.position.copy(post2Body.position)
     post2Mesh.quaternion.copy(post2Body.quaternion)
+    //Goalkepper
+    goalkeeperMesh.position.copy(goalkeeperBody.position)
+    goalkeeperMesh.quaternion.copy(goalkeeperBody.quaternion)
 }
 
 function render() {

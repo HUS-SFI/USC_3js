@@ -51,6 +51,11 @@ animate()
 async function init() {
     scene = new THREE.Scene()
 
+    fogColor = new THREE.Color(0xcccccc)
+
+    scene.background = fogColor
+    scene.fog = new THREE.Fog(fogColor, 1, 120)
+
     //  Create a camera, which defines where we're looking at.
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000)
 

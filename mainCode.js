@@ -190,22 +190,57 @@ async function init() {
     scene.add(goalkeeperMesh)
 
     // Shapes
-    // << Bowling Ball >>
-    let bowlingBallTexture = THREE.ImageUtils.loadTexture(
+    // << Ball >>
+    let BallTexture = THREE.ImageUtils.loadTexture(
         "texture/ballImages/ball.jpg"
     )
-    bowlingBallTexture.magFilter = THREE.NearestFilter
-    bowlingBallTexture.minFilter = THREE.NearestFilter
-    let bowlingBallGeometry = new THREE.SphereGeometry(1.0, 20, 20)
-    var bowlingBallMaterial = new THREE.MeshPhongMaterial({
-        map: bowlingBallTexture,
+    BallTexture.magFilter = THREE.NearestFilter
+    BallTexture.minFilter = THREE.NearestFilter
+    let BallGeometry = new THREE.SphereGeometry(1.0, 20, 20)
+    var BallMaterial = new THREE.MeshPhongMaterial({
+        map: BallTexture,
         shading: THREE.SmoothShading,
     })
-    ball = new THREE.Mesh(bowlingBallGeometry, bowlingBallMaterial)
+    ball = new THREE.Mesh(BallGeometry, BallMaterial)
     ball.castShadow = true
     ball.receiveShadow = true
     balls.push(ball)
     scene.add(balls[0])
+
+    //Ball
+    //gltfloader1 = new THREE.GLTFLoader()
+
+    /* gltfloader1.load('model/gltf/football/scene.gltf', function (gltf) {
+        ball2 = gltf.scene
+        // dragon.children[0].children[0].children[0].children[3].visible = false;
+        ball2.scale.set(.1,.1 ,.1);
+        ball2.position.set(0,-45,0);
+        scene.add(ball2);
+    }); */
+
+    // Stadium
+    gltfloader = new THREE.GLTFLoader()
+    gltfloader.load("model/gltf/soccer field/scene.gltf", function (gltf) {
+        stadium = gltf.scene
+        // console.log(goal)
+        // dragon.children[0].children[0].children[0].children[3].visible = false;
+        stadium.scale.set(2, 2, 2)
+        stadium.position.set(0, -5, 0)
+
+        scene.add(stadium)
+    })
+
+    //Goalkeeper
+
+    gltfloader1 = new THREE.GLTFLoader()
+    gltfloader1.load("model/gltf/voxel_goalkeeper/scene.gltf", function (gltf) {
+        goalkeeper = gltf.scene
+        // console.log(goal)
+        // dragon.children[0].children[0].children[0].children[3].visible = false;
+        goalkeeper.scale.set(0.5, 0.6, 0.5)
+        goalkeeper.position.set(-2, 5, -35)
+        scene.add(goalkeeper)
+    })
 
     // Light
     //  Point Light >>
@@ -273,6 +308,7 @@ function initCannon() {
     goalBody.angularDamping = 1
     goalBody.position.set(0, -3, -45)
     world.add(goalBody)
+
     // Posts Physic
     // 1:
     postShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
@@ -324,7 +360,7 @@ function updatePhysics() {
 
     // Merge Mesh & Physic
 
-    //Bowling Balls
+    //Balls
     balls[0].position.copy(ballsBodys[0].position)
     balls[0].quaternion.copy(ballsBodys[0].quaternion)
 
@@ -340,6 +376,7 @@ function updatePhysics() {
     // 2:
     post2Mesh.position.copy(post2Body.position)
     post2Mesh.quaternion.copy(post2Body.quaternion)
+
     //Goalkepper
     goalkeeperMesh.position.copy(goalkeeperBody.position)
     goalkeeperMesh.quaternion.copy(goalkeeperBody.quaternion)
@@ -357,6 +394,7 @@ function onDocumentKeyDown(event) {
     if (event.keyCode == 13) {
         power++
     }
+
     if (event.keyCode == 39) {
         //کات دادن
         ballsBodys[0].position.x += 0.1
@@ -402,6 +440,7 @@ function checked() {
 }
 
 function ballMove() {
+    // console.log(ballsBodys[0].position.y)
     if (counter1 < 50) {
         if (countBall <= 0) {
             ballsBodys[0].position.x += 0.25
@@ -417,6 +456,7 @@ function ballMove() {
         counter2 = 0
     }
 }
+
 function goalkeeprMove() {
     if (count1 < 110) {
         goalkeeperBody.position.x += 0.05

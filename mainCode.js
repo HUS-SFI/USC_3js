@@ -19,7 +19,8 @@ var countBall = 0
 var ballsBodys = []
 var pinArrayBody = []
 var scores = 0
-
+var goalMesh,
+ 
 var power = 0
 
 var flag1 = 1

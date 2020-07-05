@@ -348,6 +348,7 @@ function updatePhysics() {
 function render() {
     renderer.render(scene, camera)
     ballMove()
+    goalkeeprMove()
     camera.updateMatrixWorld()
 }
 
@@ -414,6 +415,18 @@ function ballMove() {
     } else {
         counter1 = 0
         counter2 = 0
+    }
+}
+function goalkeeprMove() {
+    if (count1 < 110) {
+        goalkeeperBody.position.x += 0.05
+        count1++
+    } else if (count2 < 110 && count1 == 110) {
+        goalkeeperBody.position.x -= 0.05
+        count2++
+    } else {
+        count1 = 0
+        count2 = 0
     }
 }
 

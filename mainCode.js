@@ -42,6 +42,11 @@ var pinArrayBody = []
 var scores = 0
 
 var power = 0
+
+var flag1 = 1
+
+var moveR, moveL
+
 init()
 
 initCannon()

@@ -4,7 +4,26 @@ var camera, renderer, scene
 var spotLight
 
 //physics
-var surfaceMesh, groundBody, groundShape, ball, ballBody, ballShape, table
+var surfaceMesh, goalMesh, postMesh, post2Mesh, goalkeeperMesh
+var groundBody,
+    groundShape,
+    ball,
+    ballBody,
+    ballShape,
+    stadium,
+    goalkeeper,
+    goal,
+    goalShape,
+    goalBody,
+    postShape,
+    post2Shape,
+    postBody,
+    post2Body,
+    goalkeeperShape,
+    goalkeeperBody
+
+var gltfloader, gltfloader1
+
 var pin
 var mass,
     world,
@@ -13,20 +32,16 @@ var cannonDebugRenderer
 var phsyicRenderer = false
 var time
 var counter1 = 0,
-    counter2 = 0
+    counter2 = 0,
+    count1 = 0,
+    count2 = 0
 var balls = []
 var countBall = 0
 var ballsBodys = []
 var pinArrayBody = []
 var scores = 0
-var goalMesh,
- 
-var power = 0
-var postMesh,
-post2Mesh,
-goalkeeperMesh
- var flag1 = 1
 
+var power = 0
 init()
 
 initCannon()
@@ -100,19 +115,19 @@ async function init() {
     goalMesh.visible = false
     scene.add(goalMesh)
 
- // Posts
+    // Posts
     // 1:
 
-    let postTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
-    postTexture.repeat.set(4, 1);
-    postTexture.wrapS = THREE.RepeatWrapping;
-    postTexture.wrapT = THREE.RepeatWrapping;
-    postTexture.minFilter = THREE.NearestFilter;
-    let postGeometry = new THREE.BoxGeometry(0.5, 5, 0);
+    let postTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
+    postTexture.repeat.set(4, 1)
+    postTexture.wrapS = THREE.RepeatWrapping
+    postTexture.wrapT = THREE.RepeatWrapping
+    postTexture.minFilter = THREE.NearestFilter
+    let postGeometry = new THREE.BoxGeometry(0.5, 5, 0)
     let postMaterial = new THREE.MeshPhongMaterial({
         map: postTexture,
-        shading: THREE.SmoothShading
-    });
+        shading: THREE.SmoothShading,
+    })
     postMesh = new THREE.Mesh(postGeometry, postMaterial)
     postMesh.rotateX(-Math.PI)
     postMesh.position.y = -3
@@ -124,16 +139,16 @@ async function init() {
 
     // 2:
 
-    let post2Texture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
-    post2Texture.repeat.set(4, 1);
-    post2Texture.wrapS = THREE.RepeatWrapping;
-    post2Texture.wrapT = THREE.RepeatWrapping;
-    post2Texture.minFilter = THREE.NearestFilter;
-    let post2Geometry = new THREE.BoxGeometry(0.5, 5, 0);
+    let post2Texture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
+    post2Texture.repeat.set(4, 1)
+    post2Texture.wrapS = THREE.RepeatWrapping
+    post2Texture.wrapT = THREE.RepeatWrapping
+    post2Texture.minFilter = THREE.NearestFilter
+    let post2Geometry = new THREE.BoxGeometry(0.5, 5, 0)
     let post2Material = new THREE.MeshPhongMaterial({
         map: postTexture,
-        shading: THREE.SmoothShading
-    });
+        shading: THREE.SmoothShading,
+    })
     post2Mesh = new THREE.Mesh(post2Geometry, post2Material)
     post2Mesh.rotateX(-Math.PI)
     post2Mesh.position.y = -3
@@ -145,16 +160,16 @@ async function init() {
 
     //Goalkeeper
 
-    let goalkeeperTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
-    goalkeeperTexture.repeat.set(4, 1);
-    goalkeeperTexture.wrapS = THREE.RepeatWrapping;
-    goalkeeperTexture.wrapT = THREE.RepeatWrapping;
-    goalkeeperTexture.minFilter = THREE.NearestFilter;
-    let goalkeeperGeometry = new THREE.BoxGeometry(1, 5, 0);
+    let goalkeeperTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
+    goalkeeperTexture.repeat.set(4, 1)
+    goalkeeperTexture.wrapS = THREE.RepeatWrapping
+    goalkeeperTexture.wrapT = THREE.RepeatWrapping
+    goalkeeperTexture.minFilter = THREE.NearestFilter
+    let goalkeeperGeometry = new THREE.BoxGeometry(1, 5, 0)
     let goalkeeperMaterial = new THREE.MeshPhongMaterial({
-        map:goalkeeperTexture,
-        shading: THREE.SmoothShading
-    });
+        map: goalkeeperTexture,
+        shading: THREE.SmoothShading,
+    })
     goalkeeperMesh = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial)
     goalkeeperMesh.rotateX(-Math.PI)
     goalkeeperMesh.position.y = -3
@@ -206,6 +221,18 @@ async function init() {
     nearSpotLight.shadow.camera.far = 500
     nearSpotLight.visible = true
     scene.add(nearSpotLight)
+
+    // Sound
+    var listener = new THREE.AudioListener()
+    camera.add(listener)
+    var sound = new THREE.Audio(listener)
+    var audioLoader = new THREE.AudioLoader()
+    audioLoader.load("sound/World Cup FIFA (2002).mp3", function (buffer) {
+        sound.setBuffer(buffer)
+        sound.setLoop(true)
+        sound.setVolume(0.7)
+        sound.play()
+    })
 }
 
 function initCannon() {
@@ -228,6 +255,14 @@ function initCannon() {
     ballBody.position.set(-6, 5, 7)
     ballsBodys.push(ballBody)
     world.add(ballsBodys[0])
+
+    // Goal Physic
+    goalShape = new CANNON.Box(new CANNON.Vec3(7, 2.0, 1.0))
+    goalBody = new CANNON.Body({ mass: 1000 })
+    goalBody.addShape(goalShape)
+    goalBody.angularDamping = 1
+    goalBody.position.set(0, -3, -45)
+    world.add(goalBody)
 
     // Ground (Floor)
     groundShape = new CANNON.Plane()

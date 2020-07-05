@@ -309,6 +309,13 @@ function onDocumentKeyDown(event) {
     if (event.keyCode == 13) {
         power++
     }
+    if (event.keyCode == 39) {
+        //کات دادن
+        ballsBodys[0].position.x += 0.1
+    }
+    if (event.keyCode == 37) {
+        ballsBodys[0].position.x -= 0.1
+    }
 }
 
 var i = 0

@@ -24,7 +24,8 @@ var goalMesh,
 var power = 0
 var postMesh,
 post2Mesh,
-var flag1 = 1
+goalkeeperMesh
+ var flag1 = 1
 
 init()
 
@@ -142,7 +143,26 @@ async function init() {
     post2Mesh.visible = false
     scene.add(post2Mesh)
 
-    
+    //Goalkeeper
+
+    let goalkeeperTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    goalkeeperTexture.repeat.set(4, 1);
+    goalkeeperTexture.wrapS = THREE.RepeatWrapping;
+    goalkeeperTexture.wrapT = THREE.RepeatWrapping;
+    goalkeeperTexture.minFilter = THREE.NearestFilter;
+    let goalkeeperGeometry = new THREE.BoxGeometry(1, 5, 0);
+    let goalkeeperMaterial = new THREE.MeshPhongMaterial({
+        map:goalkeeperTexture,
+        shading: THREE.SmoothShading
+    });
+    goalkeeperMesh = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial)
+    goalkeeperMesh.rotateX(-Math.PI)
+    goalkeeperMesh.position.y = -3
+    goalkeeperMesh.position.z = -45
+    goalkeeperMesh.position.x = 0
+    goalkeeperMesh.receiveShadow = true
+    //goalkeeperMesh.visible = false
+    scene.add(goalkeeperMesh)
 
     // Shapes
     // << Bowling Ball >>

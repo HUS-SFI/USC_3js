@@ -273,6 +273,23 @@ function initCannon() {
     goalBody.angularDamping = 1
     goalBody.position.set(0, -3, -45)
     world.add(goalBody)
+    // Posts Physic
+    // 1:
+    postShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
+    postBody = new CANNON.Body({ mass: 1000 })
+    postBody.addShape(postShape)
+    postBody.angularDamping = 1
+    postBody.position.set(-3.5, -3, -43)
+    world.add(postBody)
+
+    // 2:
+
+    post2Shape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
+    post2Body = new CANNON.Body({ mass: 1000 })
+    post2Body.addShape(post2Shape)
+    post2Body.angularDamping = 1
+    post2Body.position.set(3.5, -3, -43)
+    world.add(post2Body)
 
     // Ground (Floor)
     groundShape = new CANNON.Plane()

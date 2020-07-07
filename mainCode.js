@@ -3,16 +3,20 @@ var height = window.innerHeight
 var camera, renderer, scene
 var spotLight
 
-//physics
-var surfaceMesh, goalMesh, postMesh, post2Mesh, goalkeeperMesh
+
+var surfaceMesh,
+    goalMesh,
+    postMesh,
+    post2Mesh,
+    goalkeeperMesh
 var groundBody,
     groundShape,
     ball,
+    ball2,
     ballBody,
     ballShape,
-    stadium,
+    field,
     goalkeeper,
-    goal,
     goalShape,
     goalBody,
     postShape,
@@ -22,9 +26,11 @@ var groundBody,
     goalkeeperShape,
     goalkeeperBody
 
-var gltfloader, gltfloader1
+var gltfloader,
+    gltfloader1,
+    gltfloader2
 
-var pin
+
 var mass,
     world,
     timeStep = 1 / 60
@@ -38,14 +44,12 @@ var counter1 = 0,
 var balls = []
 var countBall = 0
 var ballsBodys = []
-var pinArrayBody = []
 var scores = 0
 
 var power = 0
 
 var flag1 = 1
 
-var moveR, moveL
 
 init()
 
@@ -56,10 +60,12 @@ animate()
 async function init() {
     scene = new THREE.Scene()
 
-    fogColor = new THREE.Color(0xcccccc)
+    // Fog
+    fogColor = new THREE.Color(0xcccccc);
 
-    scene.background = fogColor
-    scene.fog = new THREE.Fog(fogColor, 1, 120)
+    scene.background = fogColor;
+    scene.fog = new THREE.Fog(fogColor, 1, 120);
+
 
     //  Create a camera, which defines where we're looking at.
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000)
@@ -104,18 +110,20 @@ async function init() {
     surfaceMesh.receiveShadow = true
     scene.add(surfaceMesh)
 
+
+
     // Goal
 
-    let goalTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
-    goalTexture.repeat.set(4, 1)
-    goalTexture.wrapS = THREE.RepeatWrapping
-    goalTexture.wrapT = THREE.RepeatWrapping
-    goalTexture.minFilter = THREE.NearestFilter
-    let goalGeometry = new THREE.BoxGeometry(7, 5, 1)
+    let goalTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    goalTexture.repeat.set(4, 1);
+    goalTexture.wrapS = THREE.RepeatWrapping;
+    goalTexture.wrapT = THREE.RepeatWrapping;
+    goalTexture.minFilter = THREE.NearestFilter;
+    let goalGeometry = new THREE.BoxGeometry(7, 5, 1);
     let goalMaterial = new THREE.MeshPhongMaterial({
         map: goalTexture,
-        shading: THREE.SmoothShading,
-    })
+        shading: THREE.SmoothShading
+    });
     goalMesh = new THREE.Mesh(goalGeometry, goalMaterial)
     goalMesh.rotateX(-Math.PI)
     goalMesh.position.y = -3
@@ -125,19 +133,21 @@ async function init() {
     goalMesh.visible = false
     scene.add(goalMesh)
 
+
+
     // Posts
     // 1:
 
-    let postTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
-    postTexture.repeat.set(4, 1)
-    postTexture.wrapS = THREE.RepeatWrapping
-    postTexture.wrapT = THREE.RepeatWrapping
-    postTexture.minFilter = THREE.NearestFilter
-    let postGeometry = new THREE.BoxGeometry(0.5, 5, 0)
+    let postTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    postTexture.repeat.set(4, 1);
+    postTexture.wrapS = THREE.RepeatWrapping;
+    postTexture.wrapT = THREE.RepeatWrapping;
+    postTexture.minFilter = THREE.NearestFilter;
+    let postGeometry = new THREE.BoxGeometry(0.5, 5, 0);
     let postMaterial = new THREE.MeshPhongMaterial({
         map: postTexture,
-        shading: THREE.SmoothShading,
-    })
+        shading: THREE.SmoothShading
+    });
     postMesh = new THREE.Mesh(postGeometry, postMaterial)
     postMesh.rotateX(-Math.PI)
     postMesh.position.y = -3
@@ -149,16 +159,16 @@ async function init() {
 
     // 2:
 
-    let post2Texture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
-    post2Texture.repeat.set(4, 1)
-    post2Texture.wrapS = THREE.RepeatWrapping
-    post2Texture.wrapT = THREE.RepeatWrapping
-    post2Texture.minFilter = THREE.NearestFilter
-    let post2Geometry = new THREE.BoxGeometry(0.5, 5, 0)
+    let post2Texture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    post2Texture.repeat.set(4, 1);
+    post2Texture.wrapS = THREE.RepeatWrapping;
+    post2Texture.wrapT = THREE.RepeatWrapping;
+    post2Texture.minFilter = THREE.NearestFilter;
+    let post2Geometry = new THREE.BoxGeometry(0.5, 5, 0);
     let post2Material = new THREE.MeshPhongMaterial({
         map: postTexture,
-        shading: THREE.SmoothShading,
-    })
+        shading: THREE.SmoothShading
+    });
     post2Mesh = new THREE.Mesh(post2Geometry, post2Material)
     post2Mesh.rotateX(-Math.PI)
     post2Mesh.position.y = -3
@@ -170,24 +180,25 @@ async function init() {
 
     //Goalkeeper
 
-    let goalkeeperTexture = THREE.ImageUtils.loadTexture("texture/floor1.jpg")
-    goalkeeperTexture.repeat.set(4, 1)
-    goalkeeperTexture.wrapS = THREE.RepeatWrapping
-    goalkeeperTexture.wrapT = THREE.RepeatWrapping
-    goalkeeperTexture.minFilter = THREE.NearestFilter
-    let goalkeeperGeometry = new THREE.BoxGeometry(1, 5, 0)
+    let goalkeeperTexture = THREE.ImageUtils.loadTexture('texture/floor1.jpg');
+    goalkeeperTexture.repeat.set(4, 1);
+    goalkeeperTexture.wrapS = THREE.RepeatWrapping;
+    goalkeeperTexture.wrapT = THREE.RepeatWrapping;
+    goalkeeperTexture.minFilter = THREE.NearestFilter;
+    let goalkeeperGeometry = new THREE.BoxGeometry(1, 5, 0);
     let goalkeeperMaterial = new THREE.MeshPhongMaterial({
-        map: goalkeeperTexture,
-        shading: THREE.SmoothShading,
-    })
+        map:goalkeeperTexture,
+        shading: THREE.SmoothShading
+    });
     goalkeeperMesh = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial)
     goalkeeperMesh.rotateX(-Math.PI)
     goalkeeperMesh.position.y = -3
     goalkeeperMesh.position.z = -45
     goalkeeperMesh.position.x = 0
     goalkeeperMesh.receiveShadow = true
-    //goalkeeperMesh.visible = false
+    goalkeeperMesh.visible = false
     scene.add(goalkeeperMesh)
+
 
     // Shapes
     // << Ball >>
@@ -205,29 +216,27 @@ async function init() {
     ball.castShadow = true
     ball.receiveShadow = true
     balls.push(ball)
+    balls[0].visible = false
     scene.add(balls[0])
 
     //Ball
-    //gltfloader1 = new THREE.GLTFLoader()
+    gltfloader2 = new THREE.GLTFLoader()
 
-    /* gltfloader1.load('model/gltf/football/scene.gltf', function (gltf) {
-        ball2 = gltf.scene
-        // dragon.children[0].children[0].children[0].children[3].visible = false;
-        ball2.scale.set(.1,.1 ,.1);
-        ball2.position.set(0,-45,0);
-        scene.add(ball2);
-    }); */
+    gltfloader2.load('model/gltf/football/scene.gltf', function (gltf) {
+    ball2 = gltf.scene
+    ball2.scale.set(0.018,0.018 ,0.018);
+    ball2.position.set(0,0,0);
+    scene.add(ball2);
+    });
 
-    // Stadium
+    // Field
     gltfloader = new THREE.GLTFLoader()
     gltfloader.load("model/gltf/soccer field/scene.gltf", function (gltf) {
-        stadium = gltf.scene
-        // console.log(goal)
-        // dragon.children[0].children[0].children[0].children[3].visible = false;
-        stadium.scale.set(2, 2, 2)
-        stadium.position.set(0, -5, 0)
-
-        scene.add(stadium)
+        field = gltf.scene
+        field.scale.set(2, 2, 2)
+        field.position.set(0 , -5, 0)
+        
+        scene.add(field)
     })
 
     //Goalkeeper
@@ -235,12 +244,12 @@ async function init() {
     gltfloader1 = new THREE.GLTFLoader()
     gltfloader1.load("model/gltf/voxel_goalkeeper/scene.gltf", function (gltf) {
         goalkeeper = gltf.scene
-        // console.log(goal)
-        // dragon.children[0].children[0].children[0].children[3].visible = false;
         goalkeeper.scale.set(0.5, 0.6, 0.5)
         goalkeeper.position.set(-2, 5, -35)
         scene.add(goalkeeper)
     })
+
+
 
     // Light
     //  Point Light >>
@@ -251,6 +260,14 @@ async function init() {
     pointLight.shadow.camera.far = 200
     pointLight.intensity = 1
     scene.add(pointLight)
+
+    pointLight2 = new THREE.PointLight(0xffffff, 1, 800, 4)
+    pointLight2.position.set(0, 20, 20)
+    pointLight2.castShadow = true
+    pointLight2.shadow.camera.near = 1
+    pointLight2.shadow.camera.far = 200
+    pointLight2.intensity = 1
+    scene.add(pointLight2)
 
     // Spot Light >>
     // Near
@@ -267,18 +284,22 @@ async function init() {
     nearSpotLight.visible = true
     scene.add(nearSpotLight)
 
+
     // Sound
-    var listener = new THREE.AudioListener()
-    camera.add(listener)
-    var sound = new THREE.Audio(listener)
-    var audioLoader = new THREE.AudioLoader()
-    audioLoader.load("sound/World Cup FIFA (2002).mp3", function (buffer) {
-        sound.setBuffer(buffer)
-        sound.setLoop(true)
-        sound.setVolume(0.7)
-        sound.play()
-    })
+    var listener = new THREE.AudioListener();
+    camera.add(listener);
+    var sound = new THREE.Audio(listener);
+    var audioLoader = new THREE.AudioLoader();
+    audioLoader.load('sound/World Cup FIFA (2002).mp3', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.7);
+        sound.play();
+    });
+
 }
+
+
 
 function initCannon() {
     //? World Setup
@@ -295,46 +316,52 @@ function initCannon() {
     ballShape = new CANNON.Sphere(1.1)
     ballBody = new CANNON.Body({ mass: 700 })
     ballBody.addShape(ballShape)
-    //est
     ballBody.angularDamping = 0.3
     ballBody.position.set(-6, 5, 7)
     ballsBodys.push(ballBody)
     world.add(ballsBodys[0])
 
+
+
+
+
+
     // Goal Physic
-    goalShape = new CANNON.Box(new CANNON.Vec3(7, 2.0, 1.0))
-    goalBody = new CANNON.Body({ mass: 1000 })
-    goalBody.addShape(goalShape)
-    goalBody.angularDamping = 1
-    goalBody.position.set(0, -3, -45)
-    world.add(goalBody)
+    goalShape = new CANNON.Box(new CANNON.Vec3(7, 2.0, 1.0));
+    goalBody = new CANNON.Body({ mass: 1000 });
+    goalBody.addShape(goalShape);
+    goalBody.angularDamping = 1;
+    goalBody.position.set(0, -3, -45);
+    world.add(goalBody);
 
     // Posts Physic
     // 1:
-    postShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
-    postBody = new CANNON.Body({ mass: 1000 })
-    postBody.addShape(postShape)
-    postBody.angularDamping = 1
-    postBody.position.set(-3.5, -3, -43)
-    world.add(postBody)
+    postShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0));
+    postBody = new CANNON.Body({ mass: 1000 });
+    postBody.addShape(postShape);
+    postBody.angularDamping = 1;
+    postBody.position.set(-3.5, -3, -43);
+    world.add(postBody);
 
     // 2:
 
-    post2Shape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
-    post2Body = new CANNON.Body({ mass: 1000 })
-    post2Body.addShape(post2Shape)
-    post2Body.angularDamping = 1
-    post2Body.position.set(3.5, -3, -43)
-    world.add(post2Body)
+    post2Shape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0));
+    post2Body = new CANNON.Body({ mass: 1000 });
+    post2Body.addShape(post2Shape);
+    post2Body.angularDamping = 1;
+    post2Body.position.set(3.5, -3, -43);
+    world.add(post2Body);
 
     //Goalkeeper Physic
 
-    goalkeeperShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0))
-    goalkeeperBody = new CANNON.Body({ mass: 1000 })
-    goalkeeperBody.addShape(goalkeeperShape)
-    goalkeeperBody.angularDamping = 1
+    goalkeeperShape = new CANNON.Box(new CANNON.Vec3(0.5, 2.0, 1.0));
+    goalkeeperBody = new CANNON.Body({ mass: 1000 });
+    goalkeeperBody.addShape(goalkeeperShape);
+    goalkeeperBody.angularDamping = 1;
     goalkeeperBody.position.set(-3, -3, -35)
-    world.add(goalkeeperBody)
+    world.add(goalkeeperBody);
+
+
 
     // Ground (Floor)
     groundShape = new CANNON.Plane()
@@ -348,6 +375,7 @@ function initCannon() {
 }
 
 function animate() {
+
     requestAnimationFrame(animate)
     updatePhysics()
     if (phsyicRenderer) cannonDebugRenderer.update()
@@ -363,29 +391,35 @@ function updatePhysics() {
     //Balls
     balls[0].position.copy(ballsBodys[0].position)
     balls[0].quaternion.copy(ballsBodys[0].quaternion)
+    ball2.position.copy(new CANNON.Vec3(balls[0].position.x , balls[0].position.y , balls[0].position.z))
+    ball2.quaternion.copy(ballsBodys[0].quaternion)
+
 
     // Goal
-    goalMesh.position.copy(goalBody.position)
-    goalMesh.quaternion.copy(goalBody.quaternion)
+    goalMesh.position.copy(goalBody.position);
+    goalMesh.quaternion.copy(goalBody.quaternion);
 
     // Post
     // 1:
-    postMesh.position.copy(postBody.position)
-    postMesh.quaternion.copy(postBody.quaternion)
+    postMesh.position.copy(postBody.position);
+    postMesh.quaternion.copy(postBody.quaternion);
 
     // 2:
-    post2Mesh.position.copy(post2Body.position)
-    post2Mesh.quaternion.copy(post2Body.quaternion)
+    post2Mesh.position.copy(post2Body.position);
+    post2Mesh.quaternion.copy(post2Body.quaternion);
 
     //Goalkepper
-    goalkeeperMesh.position.copy(goalkeeperBody.position)
-    goalkeeperMesh.quaternion.copy(goalkeeperBody.quaternion)
+    goalkeeperMesh.position.copy(goalkeeperBody.position);
+    goalkeeperMesh.quaternion.copy(goalkeeperBody.quaternion);
+    goalkeeper.position.copy(new CANNON.Vec3(goalkeeperMesh.position.x - 2, goalkeeperMesh.position.y - 3 , goalkeeperMesh.position.z));
+    goalkeeper.quaternion.copy(goalkeeperMesh.quaternion);
 }
 
 function render() {
+
     renderer.render(scene, camera)
     ballMove()
-    goalkeeprMove()
+    goalkeeperMove()
     camera.updateMatrixWorld()
 }
 
@@ -393,10 +427,12 @@ var seconds_passed = 0
 function onDocumentKeyDown(event) {
     if (event.keyCode == 13) {
         power++
+        if(power > 30){
+            power = 30
+        }
     }
 
     if (event.keyCode == 39) {
-        //کات دادن
         ballsBodys[0].position.x += 0.1
     }
     if (event.keyCode == 37) {
@@ -430,10 +466,9 @@ async function onDocumentKeyUp(event) {
 }
 
 function checked() {
-    for (var j = 0; j < 10; j = j + 1) {
-        if (pinArrayBody[j].position.z < -55) {
-            scores = scores + 10
-        }
+
+    if (ballsBodys[0].position.z < postBody.position.z && ballsBodys[0].position.x > postBody.position.x && ballsBodys[0].position.x < post2Body.position.x) {
+        scores = "Goal!"
     }
     console.log(scores)
     return scores
@@ -457,7 +492,9 @@ function ballMove() {
     }
 }
 
-function goalkeeprMove() {
+
+function goalkeeperMove() {
+
     if (count1 < 110) {
         goalkeeperBody.position.x += 0.05
         count1++

@@ -469,8 +469,6 @@ function checked() {
 
     if (ballsBodys[0].position.z < postBody.position.z && ballsBodys[0].position.x > postBody.position.x && ballsBodys[0].position.x < post2Body.position.x) {
         scores = "Goal!"
-    }esle{
-        scores="No Goal"
     }
     console.log(scores)
     return scores
